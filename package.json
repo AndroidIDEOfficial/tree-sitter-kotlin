@@ -32,5 +32,14 @@
   },
   "devDependencies": {
     "tree-sitter-cli": "^0.20.7"
-  }
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.kt",
+      "file-types": [
+        "kt",
+        "kts"
+      ]
+    }
+  ]
 }
