@@ -182,7 +182,7 @@
 
 ;;; Literals
 
-(comment) @comment
+[(line_comment) (multiline_comment)] @comment
 
 (shebang_line) @preproc
 
@@ -208,7 +208,7 @@
 ;    - "[abc]?".toRegex()
 (call_expression
 	(navigation_expression
-		(string_literal) @string.regex)
+		((string_literal) @string.regex)
 		(navigation_suffix
 			((simple_identifier) @_function
 			(#eq? @_function "toRegex")))))
