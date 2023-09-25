@@ -113,6 +113,11 @@ module.exports = grammar({
 
     // ambiguity between parameter modifiers in anonymous functions
     [$.parameter_modifiers, $._type_modifier],
+
+    // ambiguity between type modifiers before an @
+    [$.type_modifiers],
+    // ambiguity between associating type modifiers
+    [$.not_nullable_type],
   ],
 
   externals: $ => [
@@ -466,13 +471,22 @@ module.exports = grammar({
         $.parenthesized_type,
         $.nullable_type,
         $._type_reference,
-        $.function_type
+        $.function_type,
+        $.not_nullable_type
       )
     ),
 
-    _type_reference: $ => choice(
+    _type_reference: $ => prec.left(1, choice(
       $.user_type,
       "dynamic"
+    )),
+
+    not_nullable_type: $ => seq(
+      optional($.type_modifiers),
+      choice($.user_type, $.parenthesized_user_type),
+      '&',
+      optional($.type_modifiers),
+      choice($.user_type, $.parenthesized_user_type),
     ),
 
     nullable_type: $ => seq(
@@ -705,7 +719,7 @@ module.exports = grammar({
     type_arguments: $ => seq("<", sep1($.type_projection, ","), ">"),
 
     value_arguments: $ => seq(
-      "(", 
+      "(",
       optional(
         seq(
           sep1($.value_argument, ","),
@@ -1173,7 +1187,7 @@ module.exports = grammar({
       $._backtick_identifier,
     ),
 
-    _alpha_identifier: $ => /[a-zA-Z_][a-zA-Z_0-9]*/,
+    _alpha_identifier: $ => /[\p{L}_][\p{L}_\p{Nd}]*/,
 
     _backtick_identifier: $ => /`[^\r\n`]+`/,
 
